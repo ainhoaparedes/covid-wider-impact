@@ -19,10 +19,10 @@ data_folder <- "/conf/PHSCOVID19_Analysis/shiny_input_files/" # folder for files
 ## Functions ----
 ###############################################.
 # This function aggregates data for each different cut requires
-agg_rapid <- function(grouper = NULL, split, specialty = F) {
+agg_rapid <- function(dataset, grouper = NULL, split, specialty = F) {
   
-  agg_helper <- function(more_vars, type_chosen = split) {
-    rap_adm %>%
+  agg_helper <- function(more_vars, type_chosen = split, ...) {
+    dataset %>%
       group_by_at(c("week_ending","area_name", "area_type", more_vars)) %>%
       summarise(count = sum(count)) %>% ungroup() %>%
       mutate(type = type_chosen)
@@ -133,7 +133,7 @@ prepare_final_data <- function(dataset, filename, last_week, extra_vars = NULL) 
 ###############################################.
 ## Reading RAPID data ----
 ###############################################.
-# Prepared by Unscheduled care team
+# Prepared in extract_rapid_data.R
 rap_adm <- readRDS("/conf/PHSCOVID19_Analysis/shiny_input_files/rapid/Admissions_by_category_18-May.rds") %>% 
   janitor::clean_names() %>% 
   # taking out aggregated values, not clear right now
@@ -152,6 +152,10 @@ spec_lookup <- read_csv("data/spec_groups_dashboard.csv")
 
 rap_adm <- left_join(rap_adm, spec_lookup, by = c("spec" = "spec_code")) %>% 
   select(-spec) %>% rename(spec = dash_groups)
+
+# dataset for cardio tab
+rap_cardio <- rap_adm %>% filter(!(is.na(cardio_groups))) %>% 
+  select(-spec) %>% rename(spec = cardio_groups)
 
 # For modal in app
 spec_lookup <- spec_lookup %>% filter(!(dash_groups %in% c("Dental", "Other"))) %>% 
@@ -185,11 +189,11 @@ rap_adm <- rap_adm %>% mutate(scot = "Scotland") %>%
 
 # Aggregating to obtain totals for each split type and then putting all back together
 # Totals for overalls for all pop including totals by specialty too
-rap_adm_all <- agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
-rap_adm_sex <- agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # Totals for overalls for all sexes
-rap_adm_age <- agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
+rap_adm_all <- rap_adm %>% agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
+rap_adm_sex <- rap_adm %>% agg_rapid(c("sex"), split = "sex") %>% rename(category = sex) # Totals for overalls for all sexes
+rap_adm_age <- rap_adm %>% agg_rapid(c("age"), split = "age") %>% rename(category = age) # Totals for overalls for all age groups
 # Totals for overalls for deprivation quintiles
-rap_adm_depr <- agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
+rap_adm_depr <-rap_adm %>%  agg_rapid(c("dep"), split = "dep") %>% rename(category = dep) 
   
 rap_adm <- rbind(rap_adm_all, rap_adm_depr, rap_adm_sex, rap_adm_age) 
 
@@ -208,6 +212,45 @@ rap_adm <- rbind(rap_adm, spec_med) %>%
 prepare_final_data(rap_adm, "rapid", last_week = "2020-05-10", 
                    extra_vars = c("admission_type", "spec"))
 
+###############################################.
+# RAPID data for cardio tab 
+# Formatting groups
+rap_cardio <- rap_cardio %>% 
+  rename(dep = simd_quintile, age = age_group) %>%
+  mutate(sex = recode(sex, "male" = "Male", "female" = "Female")) %>% 
+  mutate(age = recode_factor(age, "Under_5" = "Under 5", "5_thru_14" = "5 - 14", 
+                             "15_thru_44" = "15 - 44", "45_thru_64" = "45 - 64",
+                             "65_thru_74" = "65 - 74", "75_thru_84" = "75 - 84",
+                             "85+" = "85 and over")) %>% 
+  create_depgroups()  %>% 
+  mutate(admission_type = recode(admission_type, "elective" = "Planned", "emergency" = "Emergency"))
+
+# Aggregating to weekly data
+rap_cardio <- rap_cardio %>% 
+  mutate(week_ending = ceiling_date(date_adm, "week", change_on_boundary = F)) %>% #end of week
+  group_by(hscp_name, hb, admission_type, dep, age, sex, week_ending, spec) %>% 
+  summarise(count = sum(count, na.rm = T))
+
+# Aggregating for each geo level
+rap_cardio <- rap_cardio %>% mutate(scot = "Scotland") %>% 
+  gather(area_type, area_name, c(hb, hscp_name, scot)) %>% ungroup() %>% 
+  mutate(area_type = recode(area_type, "hb" = "Health board", 
+                            "hscp_name" = "HSC partnership", "scot" = "Scotland")) 
+
+# Aggregating to obtain totals for each split type and then putting all back together
+# Totals for overalls for all pop including totals by specialty too
+rap_car_all <- rap_cardio %>% agg_rapid(NULL, split = "sex", specialty = T) %>% mutate(category = "All") 
+rap_car_sex <- rap_cardio %>% agg_rapid(c("sex"), split = "sex", specialty = T) %>% rename(category = sex) # Totals for overalls for all sexes
+rap_car_age <- rap_cardio %>% agg_rapid(c("age"), split = "age",  specialty = T) %>% rename(category = age) # Totals for overalls for all age groups
+# Totals for overalls for deprivation quintiles
+rap_car_depr <- rap_cardio %>%  agg_rapid(c("dep"), split = "dep",  specialty = T) %>% rename(category = dep) 
+
+rap_car <- rbind(rap_car_all, rap_car_depr, rap_car_sex, rap_car_age) %>% 
+  filter(spec != "All")
+
+prepare_final_data(rap_car, "cardio_rapid", last_week = "2020-05-10", 
+                   extra_vars = c("admission_type", "spec"))
+  
 ###############################################.
 ## Preparing OOH data ----
 ###############################################.
