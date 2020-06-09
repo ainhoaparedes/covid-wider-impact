@@ -60,6 +60,8 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
           mainPanel(width = 12,
                     uiOutput("summary_comment"),
                     uiOutput("immun_commentary_section"),
+                    htmlOutput("links"),
+                    htmlOutput("formattedText"),
                     uiOutput("child_comments")
           )#main panel bracket
  ), #tab panel

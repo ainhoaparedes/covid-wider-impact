@@ -31,7 +31,7 @@ function(input, output, session) {
   source(file.path("data_tab.R"),  local = TRUE)$value
   
   ###############################################.
-  ## To move around tabs  
+  ## App navigation to move around tabs  
   observeEvent(input$jump_summary, {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
@@ -40,5 +40,10 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "table")
 
   })
+  
+    observeEvent(input$jump_immunisation, {
+    updateTabsetPanel(session, "intabset", selected = "child")
+  })
+  
   
 } # server end

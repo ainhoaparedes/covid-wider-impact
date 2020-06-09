@@ -1,6 +1,5 @@
 ##Server script for immunisations tab
 
-
 # Pop-up modal explaining source of data
 observeEvent(input$btn_immune_modal, 
              showModal(modalDialog(#RAPID ADMISSIONS MODAL
@@ -130,6 +129,8 @@ output$download_imm_data <- downloadHandler(
 
 output$immun_commentary_section <- renderUI({
   tagList(h2("Immunisations - 3rd June 2020"), 
+          p("Link to", 
+            actionLink( "jump_immunisation", "'Immunisation' tab.")),
           p("Information on the uptake of ",
             tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
                    are routinely offered to all preschool children",class="externallink"),
@@ -153,6 +154,18 @@ output$immun_commentary_section <- renderUI({
             for example due to missed or rescheduled appointments, so uptake rates are expected to continue to increase as children age 
             (as shown in the 2019 data provided for comparison)."
           ))
+})
+
+output$links <- renderText({
+  "<hr><br><span id='top' style='color: red;'>
+    <a href='#anchorid0'>Go to anchor0</a><br>
+    </span><br>
+    "
+})
+
+output$formattedText <- renderText({
+  "<hr><br><span id='anchorid0' style='color: red;'>Anchor0</span><br>
+    <a href='#top'>Go to Top</a><br>"
 })
 
 
