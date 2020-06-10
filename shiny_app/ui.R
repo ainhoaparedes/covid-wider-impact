@@ -59,13 +59,19 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
  tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
           mainPanel(width = 12,
                     p("This page provides general commentary around the information present within this tool. The commentary will refer to patterns and trends observed at a particular point in time and will be periodically updated."),
-                    htmlOutput("commentary_content"),
-                    uiOutput("child_comments"),
-                    HTML("<a href='#commentary_TOC'>Go to Top</a>"),
-                    uiOutput("summary_comment"),
-                    HTML("<a href='#commentary_TOC'>Go to Top</a>"),
-                    uiOutput("immun_commentary_section"),
-                    HTML("<a href='#commentary_TOC'>Go to Top</a>")
+                    htmlOutput("commentary_content"), #table of content for commentary page
+                    #Trend summary comments
+                    HTML("<span id='anchor0306_summary'></span>"), #ToC anchor postion
+                    uiOutput("summary_comment"), #commentary text
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>"), #return to ToC
+                    #immunisation comments
+                    HTML("<span id='anchor0606_immune'></span>"), #ToC anchor postion
+                    uiOutput("immun_commentary_section"), #commentary text
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>"), #return to ToC
+                    #Child health reviews
+                    HTML("<span id='anchor2006_chreviews'></span>"), #ToC anchor postion
+                    uiOutput("child_comments"),#commentary text
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>") #return to ToC
           )#main panel bracket
  ), #tab panel
 ###############################################.
@@ -111,7 +117,9 @@ tabPanel(title = "Immunisations", icon = icon("syringe"), value = "child",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_immune_modal", "Data source: PHS SIRS", icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton('download_imm_data', 'Download data'))
+                  downloadButton('download_imm_data', 'Download data'),
+                  fluidRow(br()),
+                  actionLink("jump_commentary", "Data commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,
@@ -135,7 +143,9 @@ tabPanel(title = "Child Health", icon = icon("child"), value = "child_health",
                                            direction = "vertical", justified = T))),
            column(4,actionButton("btn_child_modal", "Data source: CHSP-PS, SIRS", icon = icon('question-circle')),
                   fluidRow(br()),
-                  downloadButton("download_visit_data", "Download data"))
+                  downloadButton("download_visit_data", "Download data"),
+                  fluidRow(br()),
+                  actionLink("jump_commentary", "Data commentary"))
            #actionButton("browser", "Browser")
          ), #well panel
          mainPanel(width = 12,

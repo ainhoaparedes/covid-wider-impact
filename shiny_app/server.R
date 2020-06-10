@@ -41,11 +41,15 @@ function(input, output, session) {
   output$commentary_content <- renderText({
     "<br><span id='commentary_TOC'>
     <p>Use the links below to jump to a particular section of commentary</p>     
-    <a href='#anchor2006'>10th June 2020: Child health reviews</a><br>
-    <a href='#anchor0306'>3rd June 2020: Summary of trends</a><br>
+    <a href='#anchor0306_summary'>3rd June 2020: Summary of trends</a><br>
     <a href='#anchor0606_immune'>3rd June 2020: Immunisations</a><br>
+    <a href='#anchor2006_chreviews'>10th June 2020: Child health reviews</a><br>
     </span><br>
     "
+  })
+  
+  observeEvent(input$jump_commentary, {
+    updateTabsetPanel(session, "intabset", selected = "comment")
   })
   
   observeEvent(input$jump_summary, {
@@ -54,16 +58,16 @@ function(input, output, session) {
   
   observeEvent(input$jump_table, {
     updateTabsetPanel(session, "intabset", selected = "table")
-
+    
   })
   
-    observeEvent(input$jump_immunisation, {
+  observeEvent(input$jump_immunisation, {
     updateTabsetPanel(session, "intabset", selected = "child")
   })
   
-    observeEvent(input$jump_childhealth, {
-      updateTabsetPanel(session, "intabset", selected = "child_health")
-    })  
+  observeEvent(input$jump_childhealth, {
+    updateTabsetPanel(session, "intabset", selected = "child_health")
+  })  
     
   
 } # server end
