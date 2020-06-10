@@ -58,11 +58,14 @@ tabPanel("Introduction", icon = icon("info-circle"), value = "intro",
 ###############################################.
  tabPanel(title = "Commentary", icon = icon("list-ul"), value = "comment",
           mainPanel(width = 12,
+                    p("This page provides general commentary around the information present within this tool. The commentary will refer to patterns and trends observed at a particular point in time and will be periodically updated."),
+                    htmlOutput("commentary_content"),
+                    uiOutput("child_comments"),
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>"),
                     uiOutput("summary_comment"),
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>"),
                     uiOutput("immun_commentary_section"),
-                    htmlOutput("links"),
-                    htmlOutput("formattedText"),
-                    uiOutput("child_comments")
+                    HTML("<a href='#commentary_TOC'>Go to Top</a>")
           )#main panel bracket
  ), #tab panel
 ###############################################.

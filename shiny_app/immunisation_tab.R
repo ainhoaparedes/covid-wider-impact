@@ -129,8 +129,7 @@ output$download_imm_data <- downloadHandler(
 
 output$immun_commentary_section <- renderUI({
   tagList(h2("Immunisations - 3rd June 2020"), 
-          p("Link to", 
-            actionLink( "jump_immunisation", "'Immunisation' tab.")),
+          p("Link to",actionLink( "jump_immunisation", "Click to for 'Immunisation' data.")),
           p("Information on the uptake of ",
             tags$a(href="https://www.nhsinform.scot/healthy-living/immunisation","immunisations that 
                    are routinely offered to all preschool children",class="externallink"),
@@ -152,21 +151,8 @@ output$immun_commentary_section <- renderUI({
             immunisations given by the reporting date will not be fully complete at this stage, particularly for the most recent
             cohorts, so uptake rates are slightly under-reported. In addition, some children will receive the vaccine at a later age,
             for example due to missed or rescheduled appointments, so uptake rates are expected to continue to increase as children age 
-            (as shown in the 2019 data provided for comparison)."
-          ))
-})
-
-output$links <- renderText({
-  "<hr><br><span id='top' style='color: red;'>
-    <a href='#anchorid0'>Go to anchor0</a><br>
-    </span><br>
-    "
-})
-
-output$formattedText <- renderText({
-  "<hr><br><span id='anchorid0' style='color: red;'>Anchor0</span><br>
-    <a href='#top'>Go to Top</a><br>"
-})
+            (as shown in the 2019 data provided for comparison)."))
+  })
 
 
 #END

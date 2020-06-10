@@ -15,6 +15,10 @@ function(input, output, session) {
   source(file.path("summary_tab.R"),  local = TRUE)$value
   
   ###############################################.
+  # Commentary tab  
+  source(file.path("commentary_tab.R"),  local = TRUE)$value
+  
+  ###############################################.
   ## Cardiovascular tab
   source(file.path("cardio_tab.R"),  local = TRUE)$value
   
@@ -32,6 +36,18 @@ function(input, output, session) {
   
   ###############################################.
   ## App navigation to move around tabs  
+  
+  #Table of content for commentary page
+  output$commentary_content <- renderText({
+    "<br><span id='commentary_TOC'>
+    <p>Use the links below to jump to a particular section of commentary</p>     
+    <a href='#anchor2006'>10th June 2020: Child health reviews</a><br>
+    <a href='#anchor0306'>3rd June 2020: Summary of trends</a><br>
+    <a href='#anchor0606_immune'>3rd June 2020: Immunisations</a><br>
+    </span><br>
+    "
+  })
+  
   observeEvent(input$jump_summary, {
     updateTabsetPanel(session, "intabset", selected = "summary")
   })
@@ -45,5 +61,9 @@ function(input, output, session) {
     updateTabsetPanel(session, "intabset", selected = "child")
   })
   
+    observeEvent(input$jump_childhealth, {
+      updateTabsetPanel(session, "intabset", selected = "child_health")
+    })  
+    
   
 } # server end
