@@ -20,10 +20,10 @@ library(ggplot2)
 rm(list = ls())
 
 ## set pathways ----------------------
-datafolder <- "Z:/NRS data/Weekly COVID deaths/data/"
+datafolder <- "Z:/NRS data/Projects/Weekly COVID deaths/data/"
 appfolder <- "D:/Users/elizabethr/Documents/GitHub/covid-wider-impact/"
 #lookups <- "Z:/NRS data/Weekly COVID deaths/lookups/"
-#working <- "Z:/NRS data/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
+working <- "Z:/NRS data/Projects/Weekly COVID deaths/wider_impacts_dashboard/working_data/"
   
 ###############################################.
 ## Reading in data and lookups ----
@@ -285,7 +285,7 @@ combined_wide <- combined %>%
   arrange(category, week_ending, area_type, area_name, type)
 
 ## save final data file
-#write_rds(combined_wide, paste0(working, "deaths_data.rds"))
+write_rds(combined_wide, paste0(working, "deaths_data.rds"))
 write_rds(combined_wide, paste0(appfolder, "shiny_app/data/deaths_data.rds"))
 #combined_wide <- readRDS(paste0(appfolder, "deaths_data.rds"))
 
